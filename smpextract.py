@@ -4,19 +4,24 @@ import shutil
 import subprocess
 from zipfile import ZipFile
 from pathlib import Path
-import sys
 import argparse
 
-def prepare_docker_volume(srcDir, destDir):
+def prepare_docker_volume(srcDir, destDir, test_ids):
     
-    for item in os.listdir(srcDir):
-        item_path = os.path.join(srcDir, item)
-        dest_path = os.path.join(destDir, item)
+    for root, dirnames, filenames in os.walk(srcDir):
+        for dirname in dirnames:
+            print(dirname)
+            if dirname in test_ids:
+                print(True)
+                src_path = os.path.join(root, dirname)
+                relative_path = os.path.relpath(src_path, start=srcDir)
+                dest_path = os.path.join(destDir, relative_path)
 
-        if os.path.isdir(item_path):
-            shutil.copytree(item_path, dest_path, dirs_exist_ok=True)
-        else:
-            shutil.copy2(item_path, dest_path)
+                print("src: ", src_path)
+                print("relative: ", relative_path)
+                print("destination: ", dest_path)
+
+                shutil.copytree(src_path, dest_path, dirs_exist_ok=True)
 
 '''
 check=True: Raises an exception if the command returns a non-zero exit code. a CalledProcessError exception will be raised
@@ -92,7 +97,7 @@ def main():
     print(filter)
 
     if task_to_perform == "prepare_docker_volume":
-        prepare_docker_volume(srcDir, destDir)
+        prepare_docker_volume(srcDir, destDir, list(filter["test_id"]))
     elif task_to_perform == "retrieve_for_annotation":
         retrieve_for_annotation(filter, selectedDir)
     else:
