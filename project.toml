@@ -3,7 +3,7 @@
 requires = ["setuptools >= 61.0"]
 build-backend = "setuptools.build_meta"
 
-# define build backends
+# define project metadata
 [project]
 name = "smpextract"
 version = "1.0.0"
@@ -15,7 +15,7 @@ requires-python = ">= 3.8"
 dev = ["pip-tools"]
 
 [project.urls]
-Homepage = "https://github.com/khaingnaing/smpextract"
+homepage = "https://github.com/khaingnaing/smpextract"
 
 [project.scripts]
 smpextract = "smpextract:main"
