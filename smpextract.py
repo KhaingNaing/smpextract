@@ -2,10 +2,10 @@ import pandas as pd
 import os 
 import shutil
 import subprocess
-import tempfile
 from zipfile import ZipFile
 from pathlib import Path
 import sys
+import argparse
 
 def prepare_docker_volume(srcDir, destDir):
     
@@ -54,12 +54,24 @@ def retrieve_for_annotation(test_ids, selectedDir):
     print(f"Created zip file: {zip_file}")
     
 def main():
-    args = sys.argv[1:]
-    if args == []:
-        print("Usage: python3 smpextract.py product-validation-diary.csv")
-        sys.exit(1)
+    parse = argparse.ArgumentParser(
+        description="Extracting eye frame for SMP Annotation"
+    )
+    parse.add_argument(
+        "csv_file", 
+        type=str,
+        help="Path to the product-validation-diary CSV file"
+    )
+    parse.add_argument(
+        'option',
+        choices=["prepare_docker_volume", "retrieve_for_annotation"],
+        help="Option to perform: prepare_docker_volume or retrieve_for_annotation"
+    )
+
+    args = parse.parse_args()
     """Main function to execute the workflow."""
-    path = args[0]
+    path = args.csv_file
+    task_to_perform = args.option
     try:
         diary = pd.read_csv(path)
     except FileNotFoundError:
@@ -78,9 +90,14 @@ def main():
     columns = ["Trial", "test_id"]
     filter = diary[diary["Status"] == "awaiting frame extraction"][columns]
     print(filter)
-    prepare_docker_volume(srcDir, destDir)
-    run_docker_compose()
-    retrieve_for_annotation(filter, selectedDir)
+
+    if task_to_perform == "prepare_docker_volume":
+        prepare_docker_volume(srcDir, destDir)
+    elif task_to_perform == "retrieve_for_annotation":
+        retrieve_for_annotation(filter, selectedDir)
+    else:
+        print("No Task to perform.")
+        # run_docker_compose()
 
 if __name__ == "__main__":
     main()
