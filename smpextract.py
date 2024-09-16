@@ -6,11 +6,6 @@ import tempfile
 from zipfile import ZipFile
 from pathlib import Path
 
-diary = pd.read_csv("./product-validation-diary.csv")
-srcDir = "./results/PV_TheVersion"
-destDir = "./dockerVolume/model_outputs"
-selectedDir = "./dockerVolume/selected/SMP"
-
 def prepare_docker_volume(srcDir, destDir):
     
     for item in os.listdir(srcDir):
@@ -40,7 +35,7 @@ def run_docker_compose():
     except subprocess.CalledProcessError as e:
         print(f"Error: {e.stderr}")
 
-def retrieve_for_annotation(test_ids):
+def retrieve_for_annotation(test_ids, selectedDir):
     
     zip_file = "smp_annotation.zip"
     with ZipFile(zip_file, "w") as myzip:
@@ -56,13 +51,18 @@ def retrieve_for_annotation(test_ids):
             else:
                 print(f"Directory {folder_path} does not exist.")
     print(f"Created zip file: {zip_file}")
-        
-
-if __name__ == "__main__":
+    
+def main():
+    diary = pd.read_csv("./product-validation-diary.csv")
+    srcDir = "./results/PV_TheVersion"
+    destDir = "./dockerVolume/model_outputs"
+    selectedDir = "./dockerVolume/selected/SMP"
     columns = ["Trial", "test_id"]
     filter = diary[diary["Status"] == "awaiting frame extraction"][columns]
     print(filter)
     prepare_docker_volume(srcDir, destDir)
     run_docker_compose()
-    retrieve_for_annotation(filter)
-    
+    retrieve_for_annotation(filter, selectedDir)
+
+if __name__ == "__main__":
+    main()
