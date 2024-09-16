@@ -5,6 +5,7 @@ import subprocess
 import tempfile
 from zipfile import ZipFile
 from pathlib import Path
+import sys
 
 def prepare_docker_volume(srcDir, destDir):
     
@@ -53,10 +54,14 @@ def retrieve_for_annotation(test_ids, selectedDir):
     print(f"Created zip file: {zip_file}")
     
 def main():
-
+    args = sys.argv[1:]
+    if args == []:
+        print("Usage: python3 smpextract.py product-validation-diary.csv")
+        sys.exit(1)
     """Main function to execute the workflow."""
+    path = args[0]
     try:
-        diary = pd.read_csv("./product-validation-diary.csv")
+        diary = pd.read_csv(path)
     except FileNotFoundError:
         print("Error: The CSV file does not exist.")
         return
