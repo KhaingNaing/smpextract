@@ -1,6 +1,6 @@
 # define build tool 
 [build-system]
-requires = ["setuptools >= 61.0"]
+requires = ["setuptools >= 61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 # define project metadata
@@ -9,6 +9,10 @@ name = "smpextract"
 version = "1.0.0"
 description = "Extracting eye frame for Smooth Purse Image Annotation"
 readme = "README.md"
+authors = [{ name = "Khaing Myat Noe Naing", email = "kmyatnoe7889@gmail.com" }]
+classifiers = [
+    "Programming Language :: Python :: 3",
+]
 requires-python = ">= 3.8"
 
 [project.optional-dependencies]
