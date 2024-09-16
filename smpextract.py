@@ -10,9 +10,8 @@ def prepare_docker_volume(srcDir, destDir, test_ids):
     
     for root, dirnames, filenames in os.walk(srcDir):
         for dirname in dirnames:
-            print(dirname)
             if dirname in test_ids:
-                print(True)
+                print(dirname)
                 src_path = os.path.join(root, dirname)
                 relative_path = os.path.relpath(src_path, start=srcDir)
                 dest_path = os.path.join(destDir, relative_path)
