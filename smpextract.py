@@ -33,7 +33,7 @@ def run_docker_compose():
         )
         print(result.stdout)
     except subprocess.CalledProcessError as e:
-        print(f"Error: {e.stderr}")
+        print(f"Error running docker-compose: {e.stderr}")
 
 def retrieve_for_annotation(test_ids, selectedDir):
     
@@ -53,7 +53,20 @@ def retrieve_for_annotation(test_ids, selectedDir):
     print(f"Created zip file: {zip_file}")
     
 def main():
-    diary = pd.read_csv("./product-validation-diary.csv")
+
+    """Main function to execute the workflow."""
+    try:
+        diary = pd.read_csv("./product-validation-diary.csv")
+    except FileNotFoundError:
+        print("Error: The CSV file does not exist.")
+        return
+    except pd.errors.EmptyDataError:
+        print("Error: The CSV file is empty.")
+        return
+    except pd.errors.ParserError:
+        print("Error: There was a parsing error with the CSV file.")
+        return
+
     srcDir = "./results/PV_TheVersion"
     destDir = "./dockerVolume/model_outputs"
     selectedDir = "./dockerVolume/selected/SMP"
